@@ -1,0 +1,207 @@
+swagger: "2.0"
+
+info:
+  # version of the API:
+  version: 1.0.0
+  title: Deutsche Bahn ICE Portal API
+  description: API available in the ICE trains of Deutsche Bahn, for trainposition, speed etc.
+# array of all schemes that your API supports:
+schemes:
+  - http
+# the domain of the service:
+host: ice.portal1
+# will be prefixed to all paths:
+basePath: /jetty/api/v1
+produces:
+  - application/json
+
+paths:
+ /status:
+  get:
+   summary: Train Status
+   description: Returns info on speed and position
+   tags:
+    - Status
+   responses:
+    200:
+     description: A single status object.
+     schema:
+      $ref: '#/definitions/status'
+ /tripInfo:
+  get:
+   summary: Trip Info
+   description: Returns info on the trip
+   tags:
+    - Trip
+   responses:
+    200:
+     description: A single trip info object.
+     schema:
+      $ref: '#/definitions/tripInfo'
+
+definitions:
+  status:
+    type: object
+    properties:
+      connection:
+        type: boolean
+        description: e.g. true
+      servicelevel:
+        type: string
+        description: e.g. "SERVICE"
+      speed:
+        type: number
+        format: double
+        description: train speed in kilometer per hour, e.g. 185.8000030517578
+      longitude:
+        type: number
+        format: double
+        description: longitude in WGS84 decimal notation, e.g. 10.924448
+      latitude:
+        type: number
+        format: double
+        description: latitude in WGS84 decimal notation, e.g. 52.432009
+      serverTime:
+        type: integer
+        format: int64
+        description: serverTime as unix time (UTC), e.g. 1445351850874 (cut off after 10 characters)
+  tripInfo:
+    type: object
+    properties:
+      tripDate:
+        type: string
+        description: e.g. "2015-10-20"
+      trainType:
+        type: string
+        description: e.g. "ICE"
+      vzn:
+        type: string
+        description: e.g. "693"
+      actualPosition:
+        type: integer
+        format: int64
+        description: e.g. 11681
+      distanceFromLastStop:
+        type: integer
+        format: int64
+        description: e.g. 151687
+      totalDistance:
+        type: integer
+        format: int64
+        description: e.g. 884161
+      stopInfo:
+        $ref: '#/definitions/stopInfo'
+      stops:
+        type: array
+        #collectionFormat: csv
+        items:
+          $ref: '#/definitions/stop'
+  stop:
+    type: object
+    description: a stop with all its four properties
+    properties:
+      station:
+        $ref: '#/definitions/station'
+      timetable:
+        $ref: '#/definitions/timetable'
+      track:
+        $ref: '#/definitions/track'
+      info:
+        $ref: '#/definitions/info'
+  stopInfo:
+    type: object
+    description: just a list of six attributes
+    properties:
+      scheduledNext:
+        type: string
+        description: e.g. "8000049_00"
+      actualNext:
+        type: string
+        description: e.g. "8000049_00"
+      actualLast:
+        type: string
+        description: e.g. "8010404_00"
+      actualLastStarted:
+        type: string
+        description: e.g. "8000049"
+      finalStationName:
+        type: string
+        description: e.g. "München Hbf"
+      finalStationEvaNr:
+        type: string
+        description: e.g. "8000261_00"
+  station:
+    type: object
+    properties:
+      evaNr:
+        type: string
+        description: e.g. "8000049_00"
+      name:
+        type: string
+        description: e.g. "Braunschweig Hbf"
+      geocoordinates:
+        $ref: '#/definitions/geocoordinates'
+  geocoordinates:
+    type: object
+    description: latitude and longitude in WGS84 decimal notation
+    properties:
+      latitude:
+        type: number
+        format: double
+        description: latitude, e.g. 52.252218
+      longitude:
+        type: number
+        format: double
+        description: longitude, e.g. 10.540295
+  timetable:
+    type: object
+    properties:
+      scheduledArrivalTime:
+        type: integer
+        format: int64
+        description: e.g. 1445352960000
+      actualArrivalTime:
+        type: integer
+        format: int64
+        description: e.g. 1445352840000
+      arrivalDelay:
+        type: string
+        description: e.g. "-2"
+      scheduledDepartureTime:
+        type: integer
+        format: int64
+        description: e.g. 1445353080000
+      actualDepartureTime:
+        type: integer
+        format: int64
+        description: e.g. 1445353080000
+      departureDelay:
+        type: string
+        description: e.g. ""
+  track:
+    type: object
+    properties:
+      scheduled:
+        type: string
+        description: e.g. "6"
+      actual:
+        type: string
+        description: e.g. ""
+  info:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: int64
+        description: e.g. 0
+      passed:
+        type: boolean
+        description: e.g. false/true (what about null?)
+      distance:
+        type: integer
+        format: int64
+        description: e.g. 183060
+      distanceFromStart:
+        type: integer
+        format: int64
+        description: e.g. 194741
